@@ -10,7 +10,7 @@ from mmseg.datasets import (ADE20KDataset, BaseSegDataset, CityscapesDataset,
                             LIPDataset, LoveDADataset, MapillaryDataset_v1,
                             MapillaryDataset_v2, PascalVOCDataset,
                             PotsdamDataset, REFUGEDataset, SynapseDataset,
-                            iSAIDDataset)
+                            iSAIDDataset, OnlineGenDataset)
 from mmseg.registry import DATASETS
 from mmseg.utils import get_classes, get_palette
 
@@ -166,6 +166,7 @@ def test_custom_dataset():
     assert 'img_path' in train_data and osp.isfile(train_data['img_path'])
     assert 'seg_map_path' in train_data and osp.isfile(
         train_data['seg_map_path'])
+
 
 
 def test_ade():
@@ -433,3 +434,11 @@ def test_custom_dataset_custom_palette():
             ann_file=tempfile.mkdtemp(),
             metainfo=dict(classes=('bus', 'car'), palette=[[200, 200, 200]]),
             lazy_init=True)
+
+def test_online_gen_dataset():
+    dataset = OnlineGenDataset(
+        data_root = None,
+    )
+    assert dataset.serialize_data == False
+    # print(dataset.data_list)
+    assert len(dataset) == 10000
