@@ -127,6 +127,42 @@ class LoadAnnotations(MMCV_LoadAnnotations):
         repr_str += f'backend_args={self.backend_args})'
         return repr_str
 
+@TRANSFORMS.register_module()
+class LoadAnnotationsFromNDArray(LoadAnnotations):
+    def __init__(self, reduce_zero_label=None, 
+                 backend_args=None, 
+                 imdecode_backend='pillow') -> None:
+        super().__init__(reduce_zero_label, backend_args, imdecode_backend)
+        
+    def transform(self, results: dict) -> dict:
+        # reduce zero_label
+        if self.reduce_zero_label is None:
+            self.reduce_zero_label = results['reduce_zero_label']
+        assert self.reduce_zero_label == results['reduce_zero_label'], \
+            'Initialize dataset with `reduce_zero_label` as ' \
+            f'{results["reduce_zero_label"]} but when load annotation ' \
+            f'the `reduce_zero_label` is {self.reduce_zero_label}'
+        
+        # check the data type of seg_map
+        mask = results['seg_map']
+        if mask.dtype != np.uint8:
+            mask = mask.astype(np.uint8)
+
+        if self.reduce_zero_label:
+            mask [mask == 0] = 255
+            mask = mask - 1
+            mask[mask == 254] = 255
+        
+        if results.get('label_map', None) is not None:
+            # Add deep copy to solve bug of repeatedly
+            # replace `gt_semantic_seg`, which is reported in
+            # https://github.com/open-mmlab/mmsegmentation/pull/1445/
+            gt_semantic_seg_copy = mask.copy()
+            for old_id, new_id in results['label_map'].items():
+                mask[gt_semantic_seg_copy == old_id] = new_id
+        results['gt_seg_map'] = mask
+        results['seg_fields'].append('gt_seg_map')
+        return results
 
 @TRANSFORMS.register_module()
 class LoadImageFromNDArray(LoadImageFromFile):

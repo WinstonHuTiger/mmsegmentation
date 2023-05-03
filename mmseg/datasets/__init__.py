@@ -21,6 +21,8 @@ from .potsdam import PotsdamDataset
 from .refuge import REFUGEDataset
 from .stare import STAREDataset
 from .synapse import SynapseDataset
+from .pseudo_label import pseudoLabelDataset
+from .online_generating_pesudo_label import OnlineGenDataset
 # yapf: disable
 from .transforms import (CLAHE, AdjustGamma, BioMedical3DPad,
                          BioMedical3DRandomCrop, BioMedical3DRandomFlip,
@@ -28,6 +30,7 @@ from .transforms import (CLAHE, AdjustGamma, BioMedical3DPad,
                          BioMedicalRandomGamma, GenerateEdge, LoadAnnotations,
                          LoadBiomedicalAnnotation, LoadBiomedicalData,
                          LoadBiomedicalImageFromFile, LoadImageFromNDArray,
+                         LoadAnnotationsFromNDArray,
                          PackSegInputs, PhotoMetricDistortion, RandomCrop,
                          RandomCutOut, RandomMosaic, RandomRotate,
                          RandomRotFlip, Rerange, ResizeShortestEdge,
@@ -41,7 +44,8 @@ __all__ = [
     'PascalContextDataset', 'PascalContextDataset59', 'ChaseDB1Dataset',
     'DRIVEDataset', 'HRFDataset', 'STAREDataset', 'DarkZurichDataset',
     'NightDrivingDataset', 'COCOStuffDataset', 'LoveDADataset',
-    'MultiImageMixDataset', 'iSAIDDataset', 'ISPRSDataset', 'PotsdamDataset',
+    'MultiImageMixDataset', 'iSAIDDataset', 'ISPRSDataset', 'PotsdamDataset', 
+    "pseudoLabelDataset", 'OnlineGenDataset',
     'LoadAnnotations', 'RandomCrop', 'SegRescale', 'PhotoMetricDistortion',
     'RandomRotate', 'AdjustGamma', 'CLAHE', 'Rerange', 'RGB2Gray',
     'RandomCutOut', 'RandomMosaic', 'PackSegInputs', 'ResizeToMultiple',
@@ -51,5 +55,5 @@ __all__ = [
     'BioMedicalGaussianNoise', 'BioMedicalGaussianBlur',
     'BioMedicalRandomGamma', 'BioMedical3DPad', 'RandomRotFlip',
     'SynapseDataset', 'REFUGEDataset', 'MapillaryDataset_v1',
-    'MapillaryDataset_v2'
+    'MapillaryDataset_v2', 'LoadAnnotationsFromNDArray'
 ]
