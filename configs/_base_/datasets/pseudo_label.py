@@ -1,6 +1,7 @@
 # dataset settings
-dataset_type = 'PascalVOCDataset'
-data_root = '/dev_data/data/stego_dataset/VOCdevkit/VOC2012'
+dataset_type = 'pseudoLabelDataset'
+data_root = '/dev_data/dev/unsupervised_segmentation_diffusion/usd/voc_simple_synthesized'
+data_root_val = '/dev_data/dev/unsupervised_segmentation_diffusion/usd/voc_simple_synthesized_val'
 crop_size = (512, 512)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
@@ -13,10 +14,8 @@ train_pipeline = [
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
     dict(type='PhotoMetricDistortion'),
-    dict(type='Pad', size=crop_size),
     dict(type='PackSegInputs')
 ]
-
 test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='Resize', scale=(2048, 512), keep_ratio=True),
@@ -41,27 +40,17 @@ tta_pipeline = [
             ], [dict(type='LoadAnnotations')], [dict(type='PackSegInputs')]
         ])
 ]
-dataset_train = dict(
-    type=dataset_type,
-    data_root=data_root,
-    data_prefix=dict(img_path='JPEGImages', seg_map_path='SegmentationClass'),
-    ann_file='ImageSets/Segmentation/train.txt',
-    pipeline=train_pipeline)
-
-dataset_aug = dict(
-    type=dataset_type,
-    data_root=data_root,
-    data_prefix=dict(
-        img_path='JPEGImages', seg_map_path='SegmentationClassAug'),
-    ann_file='ImageSets/Segmentation/aug.txt',
-    pipeline=train_pipeline)
-
 train_dataloader = dict(
     batch_size=4,
     num_workers=4,
     persistent_workers=True,
     sampler=dict(type='InfiniteSampler', shuffle=True),
-    dataset=dict(type='ConcatDataset', datasets=[dataset_train, dataset_aug]))
+    dataset=dict(
+        type=dataset_type,
+        data_root=data_root,
+        data_prefix=dict(
+            img_path='images', seg_map_path='labels'),
+        pipeline=train_pipeline))
 
 val_dataloader = dict(
     batch_size=1,
@@ -70,10 +59,9 @@ val_dataloader = dict(
     sampler=dict(type='DefaultSampler', shuffle=False),
     dataset=dict(
         type=dataset_type,
-        data_root=data_root,
+        data_root=data_root_val,
         data_prefix=dict(
-            img_path='JPEGImages', seg_map_path='SegmentationClass'),
-        ann_file='ImageSets/Segmentation/val.txt',
+            img_path='images', seg_map_path='labels'),
         pipeline=test_pipeline))
 test_dataloader = val_dataloader
 

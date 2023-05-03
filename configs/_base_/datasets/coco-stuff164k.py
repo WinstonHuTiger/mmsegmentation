@@ -1,6 +1,6 @@
 # dataset settings
 dataset_type = 'COCOStuffDataset'
-data_root = 'data/coco_stuff164k'
+data_root = '/dev_data/data/stego_dataset/cocostuff'
 crop_size = (512, 512)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
@@ -50,6 +50,7 @@ train_dataloader = dict(
         data_prefix=dict(
             img_path='images/train2017', seg_map_path='annotations/val2017'),
         pipeline=train_pipeline))
+
 val_dataloader = dict(
     batch_size=1,
     num_workers=4,
